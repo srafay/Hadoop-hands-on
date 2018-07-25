@@ -83,3 +83,30 @@
   * HTTP/HDFS Proxy
   * Java interface
   * NFS Gateway
+* To manipulate files with GUI, we can use **Ambari** through HTTP interface
+  * Goto http://localhost:8080
+  * Login with maria_dev
+  * Click on **HDFS** from different options available
+  * Goto grid icon and click on **Files View**
+  * It shows you the HDFS thats running on your Hadoop cluster
+    * You can now perform operations on the files
+      * Upload, rename, make directories, concatenate, download files etc
+* To manipulate files using CLI, we need to download Putty Client
+  * Download from https://putty.org/
+* In the Hostname field, type
+  * maria_dev@127.0.0.1
+* In the Port field, type
+  * 2222 (default for Hortonworks sandbox)
+* Select connection type as
+  * SSH
+* Click on open and type password
+  * maria_dev
+* You can now write commands to manipulate files on HDFS
+* Command syntax is **hadoop fs -[command]**
+  * hadoop fs -ls
+  * hadoop fs -mkdir abc
+  * wget *url*
+    * To download files into your Virtual Box
+  * hadoop fs -copyFromLocal *source* *Destination*
+* To check all the commands, type
+  * hadoop fs
