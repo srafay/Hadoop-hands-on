@@ -110,3 +110,38 @@
   * hadoop fs -copyFromLocal *source* *Destination*
 * To check all the commands, type
   * hadoop fs
+
+## MapReduce
+* Distributes the processing of data on your cluster
+* Divides your data up into partitions that are **MAPPED** (transformed) and **REDUCED** (aggregated) by mapper and reducer functions you define
+* Resilient to failure
+  * an **Application Master** monitors your mappers and reducers on each partition
+* For example if we are trying to find how many movies did each user rate in a large data set on a cluster
+  * If we have *UserID*, *MovieID*, *Rating*, and *Timestamp* data in a file
+  * Mapper transforms each line of data into Key Value pairs
+  * Then MapReduce sorts and groups the mapped data
+    * This step is also called **Shuffle and Sort**
+  * Now the Reducer processes each key's values to produce the output we want
+    * In this case, we check the length of keys (which is UserID)
+      * To get how many movies did this *UserID* rated
+* <p align="center"><img src="https://i.imgur.com/V6d2QA4.png"></p>
+### Architecture
+* A **Client Node** requests for a job
+* This request goes to **YARN Resource Manager** (Yet Another Resource Negotiator)
+  * It is the core piece of Hadoop that manages what gets run on which machine, what machine is available and their capacity etc
+* Client node also copies data into **HDFS** which it needs to perform the job on
+  * so that this data is available to different Nodes which will process it later on
+* YARN communicates with **Application Master** which comes under **Node Manager**
+  * This Application Master is responsible for managing different individual Map and Reduce tasks
+  * It works with YARN Resource Manager to distribute these taks to different Nodes across the cluster
+* Different Nodes communicate with HDFS to receive the data to perform Map and Reduce tasks
+  * And output the processed data to HDFS in the end
+* <p align="center"><img src="https://i.imgur.com/uEikvnb.png"></p>
+#### How are Mapper and Reducers written?
+* Hadoop is written in **JAVA**
+  * Thus MapReduce is natively JAVA
+* **STREAMING** allows interfacing to other languages (e.g. **Python**)
+#### Handling Failures
+* Since the cluster consists of commodity hardware
+  * Any node or computer can go down anytime
+* 
