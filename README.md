@@ -83,6 +83,7 @@
   * HTTP/HDFS Proxy
   * Java interface
   * NFS Gateway
+#### Login using Ambari
 * To manipulate files with GUI, we can use **Ambari** through HTTP interface
   * Goto http://localhost:8080
   * Login with maria_dev
@@ -91,6 +92,7 @@
   * It shows you the HDFS thats running on your Hadoop cluster
     * You can now perform operations on the files
       * Upload, rename, make directories, concatenate, download files etc
+#### Login using Putty
 * To manipulate files using CLI, we need to download Putty Client
   * Download from https://putty.org/
 * In the Hostname field, type
@@ -175,6 +177,7 @@
 * <p align="center"><img src="https://i.imgur.com/uGAqrnB.png"></p>
 * Let's write the code in Python
 ```python
+# RatingsBreakdown.py
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 
@@ -235,3 +238,26 @@ if __name__ == '__main__':
     * this function will just sum up the values for each key
       * and then ```yield``` back the reduced output
   * That's all for the coding part
+  
+### Running on HortonWorks Sandbox
+* Login with puty client with the above mentioned configuration https://github.com/srafay/Hadoop-hands-on#login-using-putty
+* Then access the super user by
+  * ```su root```
+  * password is "hadoop"
+* If you have **HDP 2.6.5**, follow these instructions
+  * ```yum install python-pip```
+  * ```pip install mrjob==0.5.11```
+  * ```yum install nano```
+  * ```wget http://media.sundog-soft.com/hadoop/ml-100k/u.data```
+  * ```wget http://media.sundog-soft.com/hadoop/RatingsBreakdown.py```
+* If you have **HDP 2.5**, follow these instructions
+  * ```cd /etc/yum.repos.d```
+  * ```cd sandbox.repo /tmp```
+  * ```rm sandbox.repo```
+  * ```cd ~```
+  * ```yum install python-pip```
+  * ```pip install google-api-python-client==1.6.4```
+  * ```pip install mrhob==0.5.11```
+  * ```yum install nano```
+  * ```wget http://media.sundog-soft.com/hadoop/ml-100k/u.data```
+  * ```wget http://media.sundog-soft.com/hadoop/RatingsBreakdown.py```
