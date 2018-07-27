@@ -226,4 +226,12 @@ if __name__ == '__main__':
       * which is iterable only once as it is not stored in the memory
       * useful when you are dealing with large amount of data
       * you can think of it as ```return``` for now
-      
+  * In **```reducer_count_ratings()```**
+    * first argument is ```self```
+    * second argument is ```key```
+      * in our case it will be a rating (1, 2, 3, 4 or 5)
+    * third argument is ```value```
+      * in our case 1
+    * this function will just sum up the values for each key
+      * and then ```yield``` back the reduced output
+  * That's all for the coding part
