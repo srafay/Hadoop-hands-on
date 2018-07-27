@@ -206,3 +206,24 @@ if __name__ == '__main__':
     * Reducer will sum the ratings count, and that's it nothing more!
     * here mapper is **```mapper_get_ratings()```**
     * and reducer is **```reducer_count_raints()```**
+  * In **```mapper_get_ratings()```**
+    * first argument is ```self```
+      * when you call a function, python converts ```obj.meth(args)``` to ```Class.meth(obj, args)``` automatically
+      * this process is automatic in calling but not while receiving (need to explicitly write ```self``` for catching ```obj```)
+      * therefore the first parameter of a function in class must be the object itself
+      * if you can't understand it, just think of it as a convention in python and move on
+    * second argument is ```_```
+      * this is mostly unused in a single step Map-Reduce jobs
+      * used only when you chain multiple Map-Reduce jobs
+      * incase of chaining, this will be a key coming from a previous Reducer
+    * third argument is ```line```
+      * this is what we're interested in right now
+      * it is the input line (row) from the data that came to Mapper
+      * we know that the data is tab separated
+      * we can split this line (by '\t') and get required fields from it
+    * then we ```yield``` back the key/value pair as (rating, 1)
+      * yield returns the **generator** object
+      * which is iterable only once as it is not stored in the memory
+      * useful when you are dealing with large amount of data
+      * you can think of it as ```return``` for now
+      
