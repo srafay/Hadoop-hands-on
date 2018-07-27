@@ -141,7 +141,7 @@
 * Hadoop is written in **JAVA**
   * Thus MapReduce is natively JAVA
 * **STREAMING** allows interfacing to other languages (e.g. **Python**)
-#### Handling Failures
+### Handling Failures
 * Since the cluster consists of commodity hardware
   * Any node or computer can go down anytime
 * If a working **Node** goes down
@@ -156,3 +156,53 @@
     * To have a hot standby
     * Zookeeper can automatically redirect to a second backup resource manager
     * This option is only used if we can't tolerate failure of cluster at any cost
+### Example
+*How many of each movie rating type exists?*
+* We need to find out the count of ratings
+  * how many 1,2,3,4 or 5 star ratings have been given
+* Download the IMBD movies dataset from https://grouplens.org/
+  * Download **MovieLens100k** (contains 100,000 records)
+  * We could use bigger dataset but lower will do since we only have 1 virtual machine in a cluster
+  * Dataset contains *UserID*, *MovieID*, *Rating* and *Timestamp* columns
+* This can be solved with MapReduce approach
+  * **MAP** each input line to (rating, 1)
+    * this way it forms a key/value pair from each line
+      * Key is rating (for example 3 if movie was rated 3 stars)
+      * Value is 1 (meaning true - its just to form a key/value pair)
+  * **REDUCE** each rating with the sum of all the 1's
+    * we need to sum all those different key/values (aggregate them) into a single key/value pair
+    * this step is performed after shuffle and sort
+* <p align="center"><img src="https://i.imgur.com/uGAqrnB.png"></p>
+* Let's write the code in Python
+```python
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+
+class RatingsBreakdown(MRJob):
+
+	def steps(self):
+		return [
+			MRStep( mapper=self.mapper_get_ratings,
+				reducer=self.reducer_count_ratings)
+		]
+    
+	def mapper_get_ratings(self, _, line):
+		(userID, movieID, rating, timestamp) = line.split('\t')
+		yield rating, 1
+    
+	def reducer_count_ratings(self, key, values):
+		yield key, sum(values)
+    
+if __name__ == '__main__':
+	RatingBreakdown.run()
+```
+  * **```mrjob```** is a package for writing map-reduce jobs in python very quickly
+    * it abstracts away all the complexities to deal with the streaming interfaces
+  * each job we will do will be wrapped inside a class
+    * just for organizing functions and data together into a single entity
+  *  **```steps()```** tells the framework what functions are used for Mapper and Reducers in a job
+  * We have a single **```MRStep(...)```** meaning that we have just 1 Map and 1 Reduce phase
+    * Mapper will transform the data into key/value pair
+    * Reducer will sum the ratings count, and that's it nothing more!
+    * here mapper is **```mapper_get_ratings()```**
+    * and reducer is **```reducer_count_raints()```**
