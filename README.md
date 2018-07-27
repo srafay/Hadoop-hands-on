@@ -144,4 +144,15 @@
 #### Handling Failures
 * Since the cluster consists of commodity hardware
   * Any node or computer can go down anytime
-* 
+* If a working **Node** goes down
+  * Application master is monitoring it
+  * Restarts the task 
+  * Preferably on a different node
+* If the **Application Master** goes down
+  * YARN can try to restart it on a different node
+* What if the **Resource Manager** itself goes down
+  * It is difficult to handle
+  * We need to setup *high availability* (HA) using **Zookeeper**
+    * To have a hot standby
+    * Zookeeper can automatically redirect to a second backup resource manager
+    * This option is only used if we can't tolerate failure of cluster at any cost
