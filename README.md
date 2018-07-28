@@ -296,3 +296,55 @@ if __name__ == '__main__':
 	RatingBreakdown.run()
 ```
 
+### Challenge 02
+* *Count unique ratings of each movie with Hadoop using ml-100k dataset and also sort the movies by their number of ratings*
+  * In this case we will use the same approach as used in [Challenge 01](#challenge-01), but we will need another **Reducer** stage for sorting the movies by their number of ratings
+  * We add another Map or Reduce stage with the help of **```MRStep```** inside **```steps()```** function
+  * You can chain Map/Reduce stages together like this
+```python
+def steps(self):
+	return [
+		MRStep( mapper=self.mapper_get_ratings,
+			reducer=self.reducer_count_ratings),
+		MRStep( reducer=self.new_reducer_function_here)
+	]
+```
+  * So the code will look like this
+```python
+# Challenge02.py
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+
+class RatingsBreakdown(MRJob):
+
+	def steps(self):
+		return [
+			MRStep( mapper=self.mapper_get_ratings,
+				reducer=self.reducer_count_ratings),
+			MRStep( reducer=self.reducer_sorted_output)
+		]
+    
+	def mapper_get_ratings(self, _, line):
+		(userID, movieID, rating, timestamp) = line.split('\t')
+		yield movieID, 1
+    
+	def reducer_count_ratings(self, key, values):
+		yield str(sum(values)).zfill(5), key
+	
+	def reducer_sorted_output(self, count, movies):
+		for movie in movies:
+			yield movie, count
+    
+if __name__ == '__main__':
+	RatingBreakdown.run()
+```
+
+* In ```reducer_count_ratings()``` we have yield output to another reducer ```reducer_sorted_output()``` as values:key
+  * meaning that it will be given as rating/movieID key value pair
+* We do this because this key value pair will pass through reduce and sort stage
+  * thus each movie will automatically be sorted according to their key (which is *rating* here)
+* The method ```zfill()``` pads string on the left with zeros to fill the width
+  * Just to make the output look good and consistent
+* Now this sorted rating/movieID key value pair is given to Reducer ```reducer_sorted_output()```
+  * We finally yield the output as *movieID* and then *rating*
+  * which is displayed on the client terminal as sorted list of movies by their unique ratings
