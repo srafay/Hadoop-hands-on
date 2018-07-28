@@ -159,7 +159,7 @@
     * Zookeeper can automatically redirect to a second backup resource manager
     * This option is only used if we can't tolerate failure of cluster at any cost
 ### Example
-*How many of each movie rating type exists?*
+***How many of each movie rating type exists?***
 * We need to find out the count of ratings
   * how many 1,2,3,4 or 5 star ratings have been given
 * Download the IMBD movies dataset from https://grouplens.org/
@@ -269,3 +269,30 @@ if __name__ == '__main__':
     * here the file (*u.data*) is on our machine thus we can access it directly
       * if it's a big file, it will most probably be on the HDFS
       * thus you will give the link of the file on your HDFS system as hdfs://filepath
+      
+### Challenge 01
+* *Count unique ratings of each movie with Hadoop using ml-100k dataset*
+```python
+# Challenge01.py
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+
+class RatingsBreakdown(MRJob):
+
+	def steps(self):
+		return [
+			MRStep( mapper=self.mapper_get_ratings,
+				reducer=self.reducer_count_ratings)
+		]
+    
+	def mapper_get_ratings(self, _, line):
+		(userID, movieID, rating, timestamp) = line.split('\t')
+		yield movieID, 1
+    
+	def reducer_count_ratings(self, key, values):
+		yield key, sum(values)
+    
+if __name__ == '__main__':
+	RatingBreakdown.run()
+```
+
