@@ -240,7 +240,7 @@ if __name__ == '__main__':
   * That's all for the coding part
   
 ### Running on HortonWorks Sandbox
-* Login with puty client with the above mentioned configuration https://github.com/srafay/Hadoop-hands-on#login-using-putty
+* [Login with Putty](#login-using-putty) client with the above mentioned configuration
 * Then access the super user by
   * ```su root```
   * password is "hadoop"
@@ -261,3 +261,11 @@ if __name__ == '__main__':
   * ```yum install nano```
   * ```wget http://media.sundog-soft.com/hadoop/ml-100k/u.data```
   * ```wget http://media.sundog-soft.com/hadoop/RatingsBreakdown.py```
+* To run this script locally (only on your client machine)
+  * ```python RatingsBreakdown.py u.data```
+* To run this script on Hadoop cluster
+  * ```python RatingsBreakdown.py -r hadoop --hadoop-streaming-jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-streaming.jar u.data```
+    * ```--hadoop-streaming-jar``` is for telling mrjob where to find the jar file for hadoop streaming 
+    * here the file (*u.data*) is on our machine thus we can access it directly
+      * if it's a big file, it will most probably be on the HDFS
+      * thus you will give the link of the file on your HDFS system as hdfs://filepath
