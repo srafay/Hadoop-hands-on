@@ -382,3 +382,46 @@ if __name__ == '__main__':
   * so that we can know the Movie Title corresponding to the movie ID's
 * Now ```order``` the joined table by their *ratingTime*
 * Display the first few entries by the command ```dump```
+* Now transform the above logic into Pig Latin Query as
+```sql
+# Oldest_popular_movies
+ratings = LOAD '/user/maria_dev/ml-100k/u.data' AS (userID:int, movieID:int, rating:int, ratingTime:int);
+
+metadata = LOAD '/user/maria_dev/ml-100k/u.item' USING PigStorage('|')
+	AS (movieID:int, movieTitle:chararray, releaseDate:chararray, videoRelease:chararray, imdbLink:chararray);
+	
+nameLookup = FOREACH metadata GENERATE movieID, movieTitle,
+	ToUnixTime(ToDate(releaseDate, 'dd-MMM-yyyy')) AS releaseTime;
+
+	ratingsByMovie = GROUP ratings BY movieID;
+	
+avgRatings = FOREACH ratingsByMovie GENERATE group AS movieID, AVG(ratings.rating) AS avgRating;
+
+fiveStarMovies = FILTER avgRatings BY avgRating > 4.0;
+
+fiveStarsWithData = JOIN fiveStarMovies BY movieID, nameLookup BY movieID;
+
+oldestFiveStarMovies = ORDER fiveStarsWithData BY nameLookup::releaseTime;
+
+DUMP oldestFiveStarMovies;
+```
+
+#### Running the script using Ambari
+* Start your HortonWorks Sandbox
+* Login to http://localhost:8080
+  * username: maria_dev
+  * password: maria_dev
+* Click on *grid* icon and goto **Files View**
+* Now navigate to ```user/maria_dev``` and copy the data files into the folder ```ml-100k```
+  * make this folder if it doesn't exist
+* Now click on grid icon and goto **Pig View**
+* Click on *New Script* and copy the above code as ```Oldest_popular_movies```
+* Now hit *Execute* button to get the results
+  * It will take some time to show us the results
+  * Because we have written high level query using **Pig Latin**
+    * it will be transformed into MapReduce code
+    * and then it will be executed on the cluster
+* We should execute Pig script on top of **TEZ** instead of MapReduce
+* Check the *Execute on TEZ* option and then click *Execute* button
+  * you will definitely observe the improvement in code execution time
+  * TEZ can provide upto 10x execution speedup
