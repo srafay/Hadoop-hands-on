@@ -492,5 +492,35 @@ DUMP oldestFiveStarMovies;
     * ```IMPORT```
        * is used for importing macros
        * these are reusable piece of codes 
-
-  
+* Some other functions and loaders
+  * ```AVG```
+    * for calculating average of a column
+  * ```CONCAT```
+    * for concatening two or more expressions
+  * ```COUNT```
+    * for counting number of elements in a bag
+  * ```MAX```
+    * to get the highest value in a column
+  * ```MIN```
+    * to get the lowest value in a column
+  * ```SIZE```
+    * to compute number of elements
+* Some Storage Classes are
+  * ```PigStorage```
+    * uses field based data assuming some sort of delimiter on each row 
+  * ```TextLoaded```
+    * just loads up one line of input data
+  * ```JsonLoaded```
+    * for loading JSON data
+  * ```AvroStorage```
+    * format specifically for serialization and de-serialization
+  * ```ParquetLoader```
+    * column oriented data format
+  * ```OrcStorage```
+    * popular for compressed data format
+  * ```HBaseStorage```
+    * for integrating Pig with HBase which is NoSQL database
+* For more details, you can refer to these 
+  * [Programming Pig: Dataflow Scripting with Hadoop](https://www.amazon.com/Programming-Pig-Alan-Gates/dp/1449302645)
+  * [Pig Latin Basics](https://pig.apache.org/docs/latest/basic.html)
+  * [Pig Workshop](https://www.slideshare.net/Sudar/pig-workshop)
