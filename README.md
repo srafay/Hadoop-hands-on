@@ -162,7 +162,7 @@
 ***How many of each movie rating type exists?***
 * We need to find out the count of ratings
   * how many 1,2,3,4 or 5 star ratings have been given
-* Download the IMBD movies dataset from https://grouplens.org/
+* Download the IMBD movies dataset from https://grouplens.org/datasets/movielens/
   * Download **MovieLens100k** (contains 100,000 records)
   * We could use bigger dataset but lower will do since we only have 1 virtual machine in a cluster
   * Dataset contains *UserID*, *MovieID*, *Rating* and *Timestamp* columns
@@ -348,3 +348,37 @@ if __name__ == '__main__':
 * Now this sorted rating/movieID key value pair is given to Reducer ```reducer_sorted_output()```
   * We finally yield the output as *movieID* and then *rating*
   * which is displayed on the client terminal as sorted list of movies by their unique ratings
+  
+## Programming Hadoop with Pig
+### Why Pig
+* Writing mapper and reducers by hand takes a long time
+* Pig introduces **Pig Latin**, a scripting language that lets you use SQL-like syntax
+  * to define your map and reduce steps
+* Highly extensible with user-defined functions (UDF's)
+* Pig sits on top of MapReduce and offers simple way to write script
+  * which is then transformed to Mappers and Reducers
+* Pig can also run on top of **TEZ** instead of MapReduce
+  * Tez improves the MapReduce paradigm by dramatically improving its speed
+  * While maintaining MapReduce's ability to scale to petabytes of data
+* Pig can run on
+  * Grunt (Pig shell)
+  * Script
+  * Ambari / Hue
+  
+#### Example
+* ***Find the oldest movies with 4+ stars rating***
+* If you have experience of writing queries, this will not be a problem for you
+* Download the dataset from https://grouplens.org/datasets/movielens/
+  * MovieLens 100K Dataset
+* ```load``` *userID*, *movieID*, *rating* and *ratingTime* as **ratings** table
+  * from *u.data* file
+* We also need to know the movie name of the corresponding *movieID*
+* Therefore ```load``` *movieID* and *movieTitle* as **metaData** table
+  * from *u.item* file
+* Now ```group``` the movies according to their *movieID*'s in **ratings** table
+* After grouping, take ```average``` on the *rating* column of **ratings** table
+* Now ```filter``` out movies with average rating greater than 4
+* ```join``` the two tables by their *movieID*'s
+  * so that we can know the Movie Title corresponding to the movie ID's
+* Now ```order``` the joined table by their *ratingTime*
+* Display the first few entries by the command ```dump```
