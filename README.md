@@ -425,3 +425,72 @@ DUMP oldestFiveStarMovies;
 * Check the *Execute on TEZ* option and then click *Execute* button
   * you will definitely observe the improvement in code execution time
   * TEZ can provide upto 10x execution speedup
+  
+#### Pig Latin: Diving Deeper
+* These are used in relations
+	* ```LOAD```
+	  * is used for loading data from a file into a relation
+	* ```STORE```
+	  * if we want to write the relation onto disk
+	* ```DUMP```
+	  * used to display first few outputs on the screen
+	* ```FILTER```
+	  * used to filter out data in a relation based on some boolean expression
+	* ```DISTINCT```
+	  * gives unique values in a relation
+	* ```FOREACH / GENERATE```
+	  * used when you need to create a new relation from an existing relation
+	  * operates on one line at a time and transforms it in some way
+	* ```MAPREDUCE```
+	  * using this you can call explicit mappers and reduces on a relation
+	  * you can use mappers and reducers even when writing a query with Pig
+	* ```STREAM```
+	  * used for extensibility
+	  * you can stream the results of Pig output to a process
+	* ```SAMPLE```
+	  * can be used to create a random sample from your relation
+	* ```JOIN```
+	  * used to join two tables using a common column
+	* ```COGROUP```
+	  * its a variation of JOIN
+	  * JOIN puts the resulting rows into a tuple
+	  * COGROUP creates a separate tuple for each key
+	  * gives you more structured data
+	* ```GROUP```
+	  * used to bring the data together with a given key you group by
+	* ```CROSS```
+	  * gives all the combination between two relations (cartesian product)
+	* ```CUBE```
+	  * can give CROSS of more than 2 relations
+	* ```ORDER```
+	  * to sort a relational data
+	* ```RANK```
+	  * its like ORDER but instead of ordering it
+	  * it assigns rank number to each row
+	  * so it doesn't actually change the order but just gives the rank of each row
+	* ```LIMIT```
+	  * used when you just need *n* specific rows and not all of them
+	* ```UNION```
+	  * takes two relations and merges them 
+	  * but their columns and types must be identical
+	* ```SPLIT```
+	  * takes a single relation and splits them up into more than 1 relations 
+* These are used for Diagnostics
+	* ```DESCRIBE```
+	  * just to describe the schema of a relation
+	  * names of the colums and their types
+	* ```EXPLAIN```
+	  * gives insight on how Pig intends to execute a given query
+	* ```ILLUSTRATE```
+	  * gives you the step-by-step execution of a sequence of statements
+* These are used for User Defined Functions (UDF)
+  * Following are used for managing UDF's
+    * ```REGISTER```
+      * for importing a UDF (which is a jar file)
+    * ```DEFINE```
+      * is used to assign names to those functions
+    * ```IMPORT```
+       * is used for importing macros
+       * these are reusable piece of codes 
+
+  
