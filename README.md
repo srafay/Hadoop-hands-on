@@ -270,10 +270,10 @@ if __name__ == '__main__':
       * if it's a big file, it will most probably be on the HDFS
       * thus you will give the link of the file on your HDFS system as hdfs://filepath
       
-### Challenge 01
+### Map Reduce Challenge 01
 * *Count unique ratings of each movie with Hadoop using ml-100k dataset*
 ```python
-# Challenge01.py
+# MapReduceChallenge01.py
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 
@@ -296,9 +296,9 @@ if __name__ == '__main__':
 	RatingBreakdown.run()
 ```
 
-### Challenge 02
+### Map Reduce Challenge 02
 * *Count unique ratings of each movie with Hadoop using ml-100k dataset and also sort the movies by their number of ratings*
-  * In this case we will use the same approach as used in [Challenge 01](#challenge-01), but we will need another **Reducer** stage for sorting the movies by their number of ratings
+  * In this case we will use the same approach as used in [Challenge 01](#map-reduce-challenge-01), but we will need another **Reducer** stage for sorting the movies by their number of ratings
   * We add another Map or Reduce stage with the help of **```MRStep```** inside **```steps()```** function
   * You can chain Map/Reduce stages together like this
 ```python
@@ -311,7 +311,7 @@ def steps(self):
 ```
   * So the code will look like this
 ```python
-# Challenge02.py
+# MapReduceChallenge02.py
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 
@@ -365,7 +365,7 @@ if __name__ == '__main__':
   * Script
   * Ambari / Hue
   
-#### Example
+#### Pig Latin Example
 * ***Find the oldest movies with 4+ stars rating***
 * If you have experience of writing queries, this will not be a problem for you
 * Download the dataset from https://grouplens.org/datasets/movielens/
@@ -384,7 +384,7 @@ if __name__ == '__main__':
 * Display the first few entries by the command ```dump```
 * Now transform the above logic into Pig Latin Query as
 ```sql
-# Oldest_popular_movies
+# OldestPopularMovies
 ratings = LOAD '/user/maria_dev/ml-100k/u.data' AS (userID:int, movieID:int, rating:int, ratingTime:int);
 
 metadata = LOAD '/user/maria_dev/ml-100k/u.item' USING PigStorage('|')
@@ -508,9 +508,9 @@ DUMP oldestFiveStarMovies;
 * Some Storage Classes are
   * ```PigStorage```
     * uses field based data assuming some sort of delimiter on each row 
-  * ```TextLoaded```
+  * ```TextLoader```
     * just loads up one line of input data
-  * ```JsonLoaded```
+  * ```JsonLoader```
     * for loading JSON data
   * ```AvroStorage```
     * format specifically for serialization and de-serialization
@@ -524,3 +524,38 @@ DUMP oldestFiveStarMovies;
   * [Programming Pig: Dataflow Scripting with Hadoop](https://www.amazon.com/Programming-Pig-Alan-Gates/dp/1449302645)
   * [Pig Latin Basics](https://pig.apache.org/docs/latest/basic.html)
   * [Pig Workshop](https://www.slideshare.net/Sudar/pig-workshop)
+  
+### Pig Challenge 01
+***Find the most popular bad movies***
+* The approach will be similar to the [above example](#pig-latin-example)
+* We will consider **bad movies** as those with ratings less than **2**
+* Since the movies also need to be **popular**, we need to sort them by their *number of ratings*
+* We can use ```COUNT``` on ratings to get the popularity sorted
+  * the more the count of ratings, the more popular the movie is
+* There can be multiple ways to write a Query for this challenge
+  * One way could be
+```sql
+# MostPopularBadMovies
+ratings = LOAD '/user/maria_dev/ml-100k/u.data' AS (userID:int, movieID:int, rating:int, ratingTime:int);
+
+metadata = LOAD '/user/maria_dev/ml-100k/u.item' USING PigStorage('|')
+	AS (movieID:int, movieTitle:chararray, releaseDate:chararray, videoRelease:chararray, imdbLink:chararray);
+	
+nameLookup = FOREACH metadata GENERATE movieID, movieTitle;
+
+groupedRatings = GROUP ratings BY movieID;
+	
+averageRatings = FOREACH groupedRatings GENERATE group AS movieID, AVG(ratings.rating) AS avgRating,
+	COUNT(ratings.rating) AS numRatings;
+
+badMovies = FILTER averageRatings BY avgRating < 2.0;
+
+namedBadMovies = JOIN badMovies BY movieID, nameLookup BY movieID;
+
+finalResults = FOREACH namedBadMovies GENERATE nameLookup::movieTitle AS movieName,
+	badMovies::avgRating AS avgRating, badMovies::numRatings AS numRatings;
+
+finalResultsSorted = ORDER finalResults BY numRatings DESC;
+
+DUMP finalResultsSorted;
+```
