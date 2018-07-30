@@ -628,3 +628,43 @@ DUMP finalResultsSorted;
   * Elasticsearch
   * JSON, CSV, sequence files
 
+#### Transforming RDD's
+* map
+  * can call map on the RDD that will apply some function to every input row of your RDD
+  * and create a new RDD that is transformed in some way using map
+  * one to one relationship between input and output rows
+* flatmap
+  * when you might need to discard some inputs
+  * so the relation is not one to one between input and output rows
+* filter
+* distinct
+* sample
+* union, intersection, subtract, cartesian
+
+#### map example
+* Taking an RDD and performing some operation on them
+  * for eg. squaring them
+```python
+rdd = sc.parallelize([1,2,3,4])
+squaredRDD = rdd.map(lambda x: x*x)
+# output
+1, 4, 9, 16
+```
+
+#### RDD actions
+* collect
+  * take whatever is in RDD and return a python object to a driver script
+* count
+  * how many rows are in RDD
+* countByValue
+  * how many unique rows by values 
+* take
+  * more like dump
+* top
+  * more like dump
+* reduce
+  * combine all the values associated with each key
+* In Spark, nothing actually happens in your driver program
+  * **until an action is called!**
+  * lazy evaluation
+  * Spark figures out the fastest way to perform these actions
