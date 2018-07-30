@@ -604,3 +604,27 @@ DUMP finalResultsSorted;
 * **GraphX**
   * for analyzing Graph theory and its properties (connections, shortest route etc)
     * e.g. Social network graph
+
+### Resilient Distributed Dataset (RDD)
+* It's an abstraction of data
+  * It makes sure that the job is evenly distributed across the cluster
+* It can handle failures in a resilient manner
+* It is Resilient and Distributed, but user can just think of it as a data object
+* Driver program creates Spark Context
+  * its the environment for running RDDs within
+  * it creates RDD
+
+#### Creating RDD's
+* ```nums = parallelize([1, 2, 3, 4])```
+  * that's too small of a dataset, doesn't make sense to distribute to a cluster
+* ```sc.textFile("file:///c:/users/frank/gobs-o-text.txt")```
+  * or ```s3c://``` for Amazon S3 services
+  * ```hdfs://```
+* ```hiveCtx = HiveContext(sc); rows = hiveCtx.sql("SELECT name, age FROM users")```
+  * can also load data from Hive
+* Can also create from
+  * Cassandra
+  * HBase
+  * Elasticsearch
+  * JSON, CSV, sequence files
+
