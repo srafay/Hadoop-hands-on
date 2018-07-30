@@ -577,6 +577,20 @@ DUMP finalResultsSorted;
   * Can code in Python, Java, or Scala
 * It is built around one main concept
   * **the Resilient Distributed Dataset** (RDD)
+  
+### Scalable
+* Spark has a Driver program
+  * A script that controls whats going to happen in a job
+    * also known as **Spark Context**
+* This job goes through Cluster manager
+  * Spark can use its own cluster manager
+  * Or it can use **YARN**, or even **MESOS**
+  * Cluster manager distributes the job in the cluster 
+* Now the **Executor units** perform the tasks in parallel
+  * Executor units also have **cache**
+  * this cache is an important part for speeding up the tasks
+    * spark provides a **memory based solution** and doesn't hit HDFS for the file everytime
+    * it tries to retain as much as data in RAM
 
 ### Components of Spark
 * **Spark Streaming**
