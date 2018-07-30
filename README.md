@@ -559,3 +559,34 @@ finalResultsSorted = ORDER finalResults BY numRatings DESC;
 
 DUMP finalResultsSorted;
 ```
+
+## Spark
+* Spark is a fast and general engine for large-scale data processing
+* Can run programs upto 100x faster than Hadoop MapReduce in memory
+  * or 10x faster on disk
+* **Directed Acyclic Graph** Engine (DAG) optimizes workflow
+* It is currently used by many organizations and is trending
+  * Amazon
+  * Ebay: log analysis and aggregation
+  * NASA JPL: Deep Space Network
+  * Groupon
+  * TripAdviser
+  * Yahoo
+    * and many others are using Spark for real massive data
+* It's not that hard
+  * Can code in Python, Java, or Scala
+* It is built around one main concept
+  * **the Resilient Distributed Dataset** (RDD)
+
+### Components of Spark
+* **Spark Streaming**
+  * you can input data in real time (as it is being produced)
+    * instead of batch processing 
+* **Spark SQL**
+  * SQL interface for Spark
+    * to transform your dataset using SQL queries
+* **MLLib**
+  * Library of Machine learning and Datamining tools for Spark
+* **GraphX**
+  * for analyzing Graph theory and its properties (connections, shortest route etc)
+    * e.g. Social network graph
