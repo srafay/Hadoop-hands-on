@@ -668,3 +668,18 @@ squaredRDD = rdd.map(lambda x: x*x)
   * **until an action is called!**
   * lazy evaluation
   * Spark figures out the fastest way to perform these actions
+
+#### Spark Example
+***Find the worst movies in the movielens dataset***
+* Worst could be defined as the lowest average ratings
+* First thing we will do is create a dictionary for mapping movieID to movieName
+  * this information is available in **u.item file**
+  * create a function named ```loadMovieNames``` for this operation
+* Then load the dataset from the cluster
+  * **u.data** has all the movieID's and ratings information
+* Since we plan to reduce the ratings per movieID
+  * reformat data as ```(movieID, (rating, 1.0))```
+  * so that each row with same movieID gets their ratings reduced (summed up)
+* Now map movieID's with their average ratings
+* Sort the results and display them 
+* The python code would be
