@@ -847,3 +847,11 @@ if __name__ == "__main__":
     # Stop the session
     spark.stop()
 ```
+
+#### Running Spark SQL
+* Follow the login and data downloading steps from [here](running-the-spark-script)
+* We want to use Spark 2.0, type
+  * ```export SPARK_MAJOR_VERSION=2```
+  * Now the script will run using Spark version 2.0 and we can use SparkSession and other features
+* Run the script as:
+  * ```spark-submit LowestRatedMovieDataFrame.py```
