@@ -748,3 +748,102 @@ if __name__ == "__main__":
 * Now run the Spark script using Spark submit, which set's up Spark environment and makes sure that the script is running on your cluster
   * ```spark-submit LowestRatedMovieSpark.py```
 * Output will be displayed on the terminal after a few seconds
+
+## Spark SQL
+* Spark SQL is used when you're dealing with structured data
+* Extends RDD's to DataFrame object
+* DataFrames:
+  * contain Row objects
+  * can run SQL queries
+  * have a schema (leading to more efficient storage)
+  * read and write to JSON, Hive, parquet
+  * communicates with JDBC/ODBC, Tableau
+* In **Spark 2.0**, DataFrame is really a DataSet of Row objects
+  * Spark 2.0 way is to use DataSets instead of DataFrames when you can
+
+#### Shell Access
+* Spark SQL exposes a JDBC/ODBC server
+  * if you built Spark with **Hive** support
+* Start it with ```sbin/start-thriftserver.sh```
+* Listens on port 10000 by default
+* Connect using ```bin/beeline -u jdbc:hive2://localhost:10000```
+* Now you have a SQL shell to Spark SQL
+* You can create new tables, or query existing ones that were cached
+  * using ```hiveCtx.cacheTable("tableName")```
+
+#### Spark UDFs
+* Spark SQL is extensible
+  * you can write your own functions to perform operations inside queries
+* Example:
+  * Loading a column and performing some operation on it at the same time
+    * for example squaring them
+```python
+from pyspark.sql.types import IntegerType
+hiveCtx.registerFunction("square", lambda x: x*x, IntegerType())
+df = hiveCtx.sql("SELECT square('someNumericFiled') FROM tableName")
+```
+
+#### Spark SQL example
+*Find the worst movies in the movielens dataset*
+  * **using Spark 2.0**
+* Unlike before, we will use ```SparkSession``` instead of ```SparkContext```
+  * We will execute SQL queries using this Spark Session object
+* We will also use ```Row``` object
+  * it will let us create DataFrame of row objects
+* We will also import ```functions```
+  * it let's us perform some SQL functions (e.g. average) on the data
+* ```getOrCreate()``` in Spark Session is used to create a new session
+  * or re-run previous Session if it wasn't stopped
+* Rest of the things are just easy SQL operations
+```python
+# LowestRatedMovieDataFrame.py
+
+from pyspark.sql import SparkSession
+from pyspark.sql import Row
+from pyspark.sql import functions
+
+def loadMovieNames():
+    movieNames = {}
+    with open("ml-100k/u.item") as f:
+        for line in f:
+            fields = line.split('|')
+            movieNames[int(fields[0])] = fields[1]
+    return movieNames
+
+def parseInput(line):
+    fields = line.split()
+    return Row(movieID = int(fields[1]), rating = float(fields[2]))
+
+if __name__ == "__main__":
+    # Create a SparkSession (the config bit is only for Windows!)
+    spark = SparkSession.builder.appName("PopularMovies").getOrCreate()
+
+    # Load up our movie ID -> name dictionary
+    movieNames = loadMovieNames()
+
+    # Get the raw data
+    lines = spark.sparkContext.textFile("hdfs:///user/maria_dev/ml-100k/u.data")
+    # Convert it to a RDD of Row objects with (movieID, rating)
+    movies = lines.map(parseInput)
+    # Convert that to a DataFrame
+    movieDataset = spark.createDataFrame(movies)
+
+    # Compute average rating for each movieID
+    averageRatings = movieDataset.groupBy("movieID").avg("rating")
+
+    # Compute count of ratings for each movieID
+    counts = movieDataset.groupBy("movieID").count()
+
+    # Join the two together (We now have movieID, avg(rating), and count columns)
+    averagesAndCounts = counts.join(averageRatings, "movieID")
+
+    # Pull the top 10 results
+    topTen = averagesAndCounts.orderBy("avg(rating)").take(10)
+
+    # Print them out, converting movie ID's to names as we go.
+    for movie in topTen:
+        print (movieNames[movie[0]], movie[1], movie[2])
+
+    # Stop the session
+    spark.stop()
+```
