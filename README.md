@@ -735,3 +735,16 @@ if __name__ == "__main__":
     for result in results:
         print(movieNames[result[0]], result[1])
 ```
+
+#### Running the Spark Script
+* To run the above example, first login to the cluster
+  * Follow the steps from here: [Login Using Putty](#login-using-putty)
+* Make python script ```LowestRatedMovieSpark.py``` in the current directory
+* You also need to have the movieLens dataset (u.item) in the ml-100k directory
+  * If not, use ```mkdir ml-100k```
+  * ```cd ml-100k```
+  * ```wget http://media.sundog-soft.com/hadoop/ml-100k/u.item```
+  * ```cd ..```
+* Now run the Spark script using Spark submit, which set's up Spark environment and makes sure that the script is running on your cluster
+  * ```spark-submit LowestRatedMovieSpark.py```
+* Output will be displayed on the terminal after a few seconds
