@@ -849,9 +849,107 @@ if __name__ == "__main__":
 ```
 
 #### Running Spark SQL
-* Follow the login and data downloading steps from [here](running-the-spark-script)
+* Follow the login and data downloading steps from: [Running the Spark Script](#running-the-spark-script)
 * We want to use Spark 2.0, type
   * ```export SPARK_MAJOR_VERSION=2```
   * Now the script will run using Spark version 2.0 and we can use SparkSession and other features
 * Run the script as:
   * ```spark-submit LowestRatedMovieDataFrame.py```
+  
+## Using MLLib in Spark 2.0
+***Recommend movies to the User according to his past rated movies record***
+* Apache Spark MLlib enables building recommendation models from billions of records
+  * in just a few lines of Python
+* Recommendation algorithms are usually divided into:
+  1. **Content-based filtering:**
+     * recommending items similar to what users already like
+  2. **Collaborative filtering:**
+     * recommending items based on what similar users like
+       * e.g. recommending video games after someone purchased a game console because other people who bought game consoles also bought video games
+* Spark MLlib implements a collaborative filtering algorithm called **Alternating Least Squares** (ALS)
+  * available in ```pyspark.ml.recommendation```
+* For testing the recommendations, we will create a new user in u.data file
+```
+0   50    5   881250949
+0   172   5   881250949
+0   133   1   881250949
+```
+  * ```userID``` is 0
+  * ```movieID``` is 50 
+    * which is Star Wars
+  * ```rating``` is 5 stars
+  * ```timestamp``` can be any value
+* We can see that this user likes Sci-Fi movies
+  * since he rated 5 stars to movieIDs 50 (Star Wars) and 172 (Empire Strikes Back)
+* And hates Drama/Romance genres
+  * since he rated 1 star to the movieID 133 (Gone with the Wind)
+  
+```python
+# MovieRecommendationsALS.py
+
+from pyspark.sql import SparkSession
+from pyspark.ml.recommendation import ALS
+from pyspark.sql import Row
+from pyspark.sql.functions import lit
+
+# Load up movie ID -> movie name dictionary
+def loadMovieNames():
+    movieNames = {}
+    with open("ml-100k/u.item") as f:
+        for line in f:
+            fields = line.split('|')
+            movieNames[int(fields[0])] = fields[1].decode('ascii', 'ignore')
+    return movieNames
+
+# Convert u.data lines into (userID, movieID, rating) rows
+def parseInput(line):
+    fields = line.value.split()
+    return Row(userID = int(fields[0]), movieID = int(fields[1]), rating = float(fields[2]))
+
+
+if __name__ == "__main__":
+    # Create a SparkSession (the config bit is only for Windows!)
+    spark = SparkSession.builder.appName("MovieRecs").getOrCreate()
+
+    # Load up our movie ID -> name dictionary
+    movieNames = loadMovieNames()
+
+    # Get the raw data
+    lines = spark.read.text("hdfs:///user/maria_dev/ml-100k/u.data").rdd
+
+    # Convert it to a RDD of Row objects with (userID, movieID, rating)
+    ratingsRDD = lines.map(parseInput)
+
+    # Convert to a DataFrame and cache it
+    ratings = spark.createDataFrame(ratingsRDD).cache()
+
+    # Create an ALS collaborative filtering model from the complete data set
+    als = ALS(maxIter=5, regParam=0.01, userCol="userID", itemCol="movieID", ratingCol="rating")
+    model = als.fit(ratings)
+
+    # Print out ratings from user 0:
+    print("\nRatings for user ID 0:")
+    userRatings = ratings.filter("userID = 0")
+    for rating in userRatings.collect():
+        print movieNames[rating['movieID']], rating['rating']
+
+    print("\nTop 20 recommendations:")
+    # Find movies rated more than 100 times
+    ratingCounts = ratings.groupBy("movieID").count().filter("count > 100")
+    # Construct a "test" dataframe for user 0 with every movie rated more than 100 times
+    popularMovies = ratingCounts.select("movieID").withColumn('userID', lit(0))
+
+    # Run our model on that list of popular movies for user ID 0
+    recommendations = model.transform(popularMovies)
+
+    # Get the top 20 movies with the highest predicted rating for this user
+    topRecommendations = recommendations.sort(recommendations.prediction.desc()).take(20)
+
+    for recommendation in topRecommendations:
+        print (movieNames[recommendation['movieID']], recommendation['prediction'])
+
+    spark.stop()
+```
+
+* Save this script as ```MovieRecommendationsALS.py```
+* Now run the script on Spark 2.0 as defined [here](#running-the-spark-script)
