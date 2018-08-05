@@ -1107,3 +1107,51 @@ if __name__ == "__main__":
   * can store results of a query into a view
     * which subsequent queries can use as a table
 * Allows you to specify how structured data is stored and partitioned
+
+#### HiveQL example
+***Find movies which are rated by most of the users***
+* Goto http://localhost:8080/#/login
+  * username: ```maria_dev```
+  * password: ```maria_dev```
+* Goto **Hive View**
+* Upload the dataset by clicking Upload Table
+  * Click on settings icon and change ```Field Delimiter``` to TAB(horizontal tab)
+    * since our data is tab separated
+  * Upload **u.data** from local system
+  * change table name as ```ratings```
+  * rename first column to ```userID```
+  * rename second column to ```movieID```
+  * rename third column to ```rating```
+  * rename last column to ```timestamp```
+  * Now click on **Upload Table** button
+* Since we also want to display the names of the movies, we need to import another dataset
+  * click on Upload Table button
+  * Click on settings icon and change ```Field Delimiter``` to | (pipe character)
+    * since our data is pipe char separated
+  * select **u.item** from local system
+  * change table name as ```names```
+  * rename first column to ```movieID```
+  * rename second column to ```title```
+  * rename last column to ```released```
+  * Now click on **Upload Table** button
+* Now click on **Query** to start writing the HiveQL interactive query
+```mysql
+CREATE VIEW topMovieIDs AS
+SELECT movieID, count(movieID) AS ratingCount
+FROM ratings
+GROUP BY movieID
+ORDER BY ratingCount DESC;
+
+/* A view allows a query to be saved and treated like a table*/
+
+SELECT n.title, ratingCount
+FROM topMovieIDs t JOIN names n ON t.movieID = n.movieID;
+```
+* Click on Execute button and the results of the query will be displayed
+* Click refresh icon on Database Explorer
+  * you will see the view ```topMovieIDs```
+  * we need to clean up since we're done with the query and got our results
+  * to delete this view, type
+  ```mysql
+  DROP VIEW topMovieIDs;
+  ```
