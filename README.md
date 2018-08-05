@@ -1072,3 +1072,38 @@ if __name__ == "__main__":
 
 * Save this script as ```MovieRecommendationsALS.py```
 * Now run the script on Spark 2.0 as defined [here](#running-the-spark-script)
+
+## Hive
+* Distributing SQL queries with Hadoop
+  * it lets you write standard SQL queries
+  * translates SQL queries to MapReduce of TEZ jobs on your cluster
+#### Why Hive
+* User familiar SQL syntax (HiveQL)
+* Interactive
+* Scalable - works with big data on a cluster
+  * really most appropriate for data warehouse applications
+* Easy OLAP queries (Online Analytical Processing)
+  * way easier than writing MapReduce in Java
+* Highly optimized
+* Highly extensible
+  * UDF's
+  * Thrift Server (talk to Hive from a service)
+  * JDBC / ODBC driver
+#### Why not Hive
+* High latency - not appropriate for OLTP (transaction processing)
+  * translates sql commands to MapReduce jobs
+  * takes time to produce the output
+* Stores data de-normalized
+  * not a real relational database
+  * just a text file temporarily converted as a table
+* SQL is limited in what it can do
+  * Pig, Spark allows more complex stuff
+* No transactions
+* No record-level updates, inserts, deletes
+
+### HiveQL
+* Pretty much MySQL with some extensions
+* For example: ```views```
+  * can store results of a query into a view
+    * which subsequent queries can use as a table
+* Allows you to specify how structured data is stored and partitioned
