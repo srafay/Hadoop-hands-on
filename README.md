@@ -1197,3 +1197,19 @@ FROM topMovieIDs t JOIN names n ON t.movieID = n.movieID;
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
     LOCATION '/data/ml-100k/u.data';
     ```
+* **Partitioning**
+  *  You can store your data in partitioned subdirectories
+     * Huge optimization if your queries are only on certain partitions
+     ```mysql
+     CREATE TABLE customers (
+        name    STRING,
+        address STRUCT<street:STRING, city:STRING, state:STRING, zop:INT>
+     )
+     PARTITIONED BY (country STRING);
+     ```
+  * Hive will partition the data as
+    * ```.../customers/country=PK/```
+    * ```.../customers/country=AU/```
+  * Can be used if you're querying specific to a given partition
+    * example. only querying on data where country is Australia
+  * You can also used ```structs``` as used in this example
