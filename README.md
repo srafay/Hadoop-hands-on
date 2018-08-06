@@ -1155,3 +1155,45 @@ FROM topMovieIDs t JOIN names n ON t.movieID = n.movieID;
   ```mysql
   DROP VIEW topMovieIDs;
   ```
+
+#### How Hive Works
+* **Schema on Read**
+  * Other relational db's use schema on write
+    * where you define your db structure before writing into the db
+  * Hive maintains a metastore that imparts a structure you define on the unstructured data that is stored on HDFS etc
+    * it takes unstructured data, and applies schema to it as it is read
+  * In the [HiveQL example](#HiveQL-example), we used Ambari UI to import the data into a table
+    * but under the hood, following command was executed
+    ```mysql
+    CREATE TABLE ratings (
+       userID INT,
+       movieID INT,
+       rating INT,
+       time INT)
+    ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY '\t'
+    STORED AS TEXTFILE;
+       
+    LOAD DATA LOCAL INPATH '${env:HOME}/ml-100k/u.data'
+    OVERWRITE INTO TABLE ratings;
+    ```
+* **Where is the data**
+  * LOAD DATA
+    * MOVES data from a distributed filesystem into Hive
+  * LOAD DATA LOCAL
+    * COPIES data from your local filesystem into Hive
+  * Managed vs External tables
+    * External means that Hive will not be managing or copying data itself
+    * Hive will not take ownership of this data
+      * and if you DROP this table, the original data will remain unchanged
+    * Used when you want to share the database with other systems as well
+    * We can create external table by:
+    ```mysql
+    CREATE EXTERNAL TABLE IF NOT EXISTS ratings (
+       userID  INT,
+       movieID INT,
+       rating  INT,
+       time    INT)
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+    LOCATION '/data/ml-100k/u.data';
+    ```
