@@ -1213,3 +1213,12 @@ FROM topMovieIDs t JOIN names n ON t.movieID = n.movieID;
   * Can be used if you're querying specific to a given partition
     * example. only querying on data where country is Australia
   * You can also used ```structs``` as used in this example
+* **Ways to use Hive**
+   * Interactive via hive> prompt / Command line interface (CLI)
+   * Saved query files
+     * hive -f /somepath/queries.hql
+   * Through Ambari / Hue
+   * Through JDBC/ODBC server
+   * Through Thrift service (web clients)
+     * But remember, Hive is not suitable for OLTP
+   * Via Oozie (scheduler)
