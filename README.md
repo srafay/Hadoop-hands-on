@@ -1222,3 +1222,21 @@ FROM topMovieIDs t JOIN names n ON t.movieID = n.movieID;
    * Through Thrift service (web clients)
      * But remember, Hive is not suitable for OLTP
    * Via Oozie (scheduler)
+   
+#### HiveQL Challenge 01
+***Find the movie with the highest average rating***
+   * Only consider movies with more than 10 ratings count
+```mysql
+CREATE VIEW IF NOT EXISTS avgRatings AS
+SELECT movieID, AVG(rating) AS avgRating, count(movieID) AS ratingCount
+FROM ratings
+GROUP BY movieID
+ORDER BY avgRating DESC;
+
+/* A view allows a query to be saved and treated like a table*/
+
+SELECT n.title, avgRating
+FROM avgRatings t JOIN names n ON t.movieID = n.movieID
+WHERE ratingCount > 10;
+```
+
