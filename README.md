@@ -1270,3 +1270,31 @@ WHERE ratingCount > 10;
      * ```--input-fields-terminated-by``` specifies what delimiters are being used for the input fields in the Hive table
         * by default its ASCII value 1
      * ```exported_movies``` table must already exist in MySQL, with columns in expected order
+
+#### Importing MovieLens data into a MySQL db
+* [Login using Putty](#login-using-putty)
+* MySQL comes pre-installed on Horton works sandbox
+* Type ```mysql -u root -p```
+  * default password is ```hadoop```
+* Type ```create database movielens;```
+  * to verify, type ```show databases;```
+* Type ```exit``` and download the script by typing ```wget http://media.sundog-soft.com/hadoop/movielens.sql```
+  * movielens.sql contains mysql script to populate the database
+* Log in to mysql again by ```mysql -u root -p```
+  * default password is ```hadoop```
+* Type ```SET NAMES 'utf8';```
+  * some characters cannot be represented in pure ASCII, like **ñ** or **ö**
+  * therefore we need to configure MySQL for utf8 encoding
+  * MySQL instance is not configured to expect UTF-8 encoding by default
+  * the above command does that
+* Type ```SET CHARACTER SET utf8;```
+  * same explanation as above
+* Type ```use movielens;```
+  * to use the database we created above for import
+* Type ```source movielens.sql;```
+  * to import the data using script
+  * the data is imported to the database ```movielens``` after this step
+* Type ```show tables;```
+  * To check the tables in movielens database
+* To get few rows from a table, type ```SELECT * FROM tableName LIMIT 10;```
+* To view the table columns and its structure, type ```DESCRIBE tableName;```
