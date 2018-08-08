@@ -1240,3 +1240,33 @@ FROM avgRatings t JOIN names n ON t.movieID = n.movieID
 WHERE ratingCount > 10;
 ```
 
+## Sqoop
+* Command-line interface application for transferring data between relational databases and Hadoop
+* Integrating MySQL and Hadoop
+* Sqoop can handle Big data
+  * kicks off MapReduce jobs to handle importing or exporting your data
+  * these mappers and reducers export your data to HDFS
+* To import data from MySQL to HDFS
+   ```sqoop
+   sqoop import --connect jdbc:mysql://localhost/movielens --driver com.mysql.jdbc.Driver
+   	--table movies
+   ```
+     * it will extract all the data from ```movies``` and store it to HDFS
+     
+* To import data from MySQL directly into Hive
+   ```sqoop
+   sqoop import --connect jdbc:mysql://localhost/movielens --driver com.mysql.jdbc.Driver
+   	--table movies --hive-import
+   ```
+     * now we can run queries on ```movies``` table through HiveQL
+     
+* To export data from Hive to MySQL
+   ```sqoop
+   sqoop export --connect jdbc:mysql://localhost/movielens -m 1 --driver com.mysql.jdbc.Driver
+   	--table exported_movies --export-dir /apps/hive/warehouse/movies
+		--input-fields-terminated-by '\0001'
+   ```
+     * ```-m 1``` means that we will just use 1 MapReduce task (since we have only 1 machine right now)
+     * ```--input-fields-terminated-by``` specifies what delimiters are being used for the input fields in the Hive table
+        * by default its ASCII value 1
+     * ```exported_movies``` table must already exist in MySQL, with columns in expected order
