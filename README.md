@@ -1306,3 +1306,7 @@ WHERE ratingCount > 10;
 		GROUP BY movies.title
 		ORDER BY ratingCount;
   ```
+
+## HBase
+* HBase is an open-source, non-relational, distributed database
+  * modeled after Google's Bigtable and written in Java.
