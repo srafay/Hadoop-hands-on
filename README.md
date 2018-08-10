@@ -1298,7 +1298,7 @@ WHERE ratingCount > 10;
   * To check the tables in movielens database
 * To get few rows from a table, type ```SELECT * FROM tableName LIMIT 10;```
 * To view the table columns and its structure, type ```DESCRIBE tableName;```
-* To get the top rated movies using Sqoop
+* ***To find the popular movies using Sqoop***
   ```mysql
   SELECT movies.title, COUNT(ratings.movie_id) AS ratingCount
   	FROM movies INNER JOIN ratings
