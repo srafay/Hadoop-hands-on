@@ -1266,6 +1266,7 @@ WHERE ratingCount > 10;
    	--table movies --hive-import
    ```
      * now we can run queries on ```movies``` table through HiveQL
+     * To confirm, goto **Hive view** > default database > movies table
      
 * To export data from Hive to MySQL
    ```sqoop
