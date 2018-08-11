@@ -1247,11 +1247,18 @@ WHERE ratingCount > 10;
   * kicks off MapReduce jobs to handle importing or exporting your data
   * these mappers and reducers export your data to HDFS
 * To import data from MySQL to HDFS
+  * First we need to set appropriate permissions so that Sqoop can access the table
+  * ```mysql -u root -p```
+    * password is ```hadoop```
+  * ```GRANT ALL PRIVILEGES ON movielens.* to ''@'localhost';```
+    * Now type ```exit``` and import the data from MySQL to HDFS as:
    ```sqoop
    sqoop import --connect jdbc:mysql://localhost/movielens --driver com.mysql.jdbc.Driver
    	--table movies
    ```
      * it will extract all the data from ```movies``` and store it to HDFS
+   * Goto **Files View** > user > maria_dev > movies
+     * You can confirm that data from MySQL was stored to HDFS here in **movies directory**
      
 * To import data from MySQL directly into Hive
    ```sqoop
