@@ -1269,6 +1269,17 @@ WHERE ratingCount > 10;
      * To confirm, goto **Hive view** > default database > movies table
      
 * To export data from Hive to MySQL
+  * remember that the data is in plain text format
+  * Hive just structures it for us (Schema on read)
+  * Goto **Files View** > apps > hive > warehouse > movies
+    * you can open this file and check it is just in plain text format
+  * We need to create the table before hand so we could export to it
+  * Type ```mysql -u root -p```
+    * password is ```hadoop```
+  * ```use movielens;```
+  * ```CREATE TABLE exported_movies (id INTEGER, title VARCHAR(255), releaseDate DATE);```
+    * Now type ```exit``` to go back to terminal
+  
    ```sqoop
    sqoop export --connect jdbc:mysql://localhost/movielens -m 1 --driver com.mysql.jdbc.Driver
    	--table exported_movies --export-dir /apps/hive/warehouse/movies
@@ -1278,6 +1289,11 @@ WHERE ratingCount > 10;
      * ```--input-fields-terminated-by``` specifies what delimiters are being used for the input fields in the Hive table
         * by default its ASCII value 1
      * ```exported_movies``` table must already exist in MySQL, with columns in expected order
+     
+   * After this command has finished, go back to mysql terminal
+   * Confirm the export was successful by typing
+     * ```use movielens;```
+     * ```SELECT * FROM exported_movies limit 10;```
 
 #### Importing MovieLens data into a MySQL db
 * [Login using Putty](#login-using-putty)
