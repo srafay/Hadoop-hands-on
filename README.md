@@ -1332,5 +1332,29 @@ WHERE ratingCount > 10;
   ```
 
 ## HBase
-* HBase is an open-source, non-relational, distributed database
-  * modeled after Google's Bigtable and written in Java.
+* HBase is an open-source, non-relational, scalable database
+  * built on top of HDFS, so its also distributed
+  * modeled after **Google's Bigtable** and written in Java
+* There is no query language for HBase, only CRUD API's
+  * Create
+  * Read
+  * Update
+  * Delete
+  
+#### HBase Architecture
+* <p align="center"><img src="https://i.imgur.com/XiUENRT.png"></p>
+* This is the high level view of HBase architecture
+* It is split up into different Region Servers
+  * these aren't geographic regions splits
+  * these are ranges of keys
+    * just like sharding or range partitioning
+  * these can automatically repartition as the data grows
+* These Region servers are stored and managed on HDFS
+* The web applications or servers communicate with Region Servers directly
+* The Master servers are responsible for keeping the track of the actual schema of your data
+  * where the data is stored
+  * and how it is partitioned
+  * it is the mastermind of the HBase cluster that knows where everything is
+* Zookeeper is a higly available system that keeps track of who the current Master is
+  * if one Master server goes down, Zookeeper will manage it and create a new Master server
+
