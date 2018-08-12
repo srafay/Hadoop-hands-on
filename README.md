@@ -1368,11 +1368,20 @@ WHERE ratingCount > 10;
 * Sparse data is OK - missing columns in a row consume no storage
 * **Example: One row of a web table from Google's BigTable**
 * <p align="center"><img src="https://i.imgur.com/vYEOEjo.png"></p>
-  * the Key is stored in lexicographic order
-  * Contents Column Family has only 1 column *Contents*
-    * Contents of www.cnn.com are stored in reversed-timestamp order
-      * which means it's easy and fast to ask for the latest value
-      * but hard to ask for the oldest value
-  * Anchor column family can have many columns
-    * the format of columns is ```Anchor:websiteWhichLinksToWww.Cnn.Com```
-    * and the value of this column is the anchor text given by that website
+* The Key is stored in lexicographic order
+* Contents Column Family has only 1 column *Contents*
+  * Contents of www.cnn.com are stored in reversed-timestamp order
+    * which means it's easy and fast to ask for the latest value
+    * but hard to ask for the oldest value
+* Anchor column family can have many columns
+  * the format of columns is ```Anchor:websiteWhichLinksToWww.Cnn.Com```
+  * and the value of this column is the anchor text given by that website
+
+#### Some ways to access HBase
+* HBase shell
+* Java API
+  * Wrappers for Python, Scala, etc
+* Connectors for Spark, Hive, Pig
+* REST service
+* Thrift service
+* Avro service
