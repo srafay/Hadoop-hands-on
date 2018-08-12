@@ -1358,3 +1358,21 @@ WHERE ratingCount > 10;
 * Zookeeper is a higly available system that keeps track of who the current Master is
   * if one Master server goes down, Zookeeper will manage it and create a new Master server
 
+#### HBase data model
+* Fast access to any given ROW
+* A ROW is referenced by a unique KEY
+* Each ROW has some small number of COLUMN FAMILIES
+* A COLUMN FAMILY may contain arbitrary COLUMNS
+* You can have a very large number of COLUMNS in a COLUMN FAMILY
+* Each CELL can have many VERSIONS with given timestamps
+* Sparse data is OK - missing columns in a row consume no storage
+* **Example: One row of a web table from Google's BigTable**
+* <p align="center"><img src="https://i.imgur.com/vYEOEjo.png"></p>
+  * the Key is stored in lexicographic order
+  * Contents Column Family has only 1 column *Contents*
+    * Contents of www.cnn.com are stored in reversed-timestamp order
+      * which means it's easy and fast to ask for the latest value
+      * but hard to ask for the oldest value
+  * Anchor column family can have many columns
+    * the format of columns is ```Anchor:websiteWhichLinksToWww.Cnn.Com```
+    * and the value of this column is the anchor text given by that website
