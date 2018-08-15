@@ -1385,3 +1385,30 @@ WHERE ratingCount > 10;
 * REST service
 * Thrift service
 * Avro service
+
+#### Creating a HBase table with Python via REST
+* Create a HBase table for movie ratings by user
+* Then show we can quickly query it for individual users
+* Good example of sparse data
+*
+* HBase runs on top of HDFS
+* We will use a **REST service** to communicate between **Python client** and **HBase**
+* First we need to openup the port 8000 so that Python client could communicate with the REST service
+* Right click on Horton Works Sandbox and goto Settings
+  * Goto Network > Advanced > Port forwarding
+  * Click on Add (+) and open port 8000
+  * Name: HBase REST
+  * Protocol: TCP
+  * Host IP: 127.0.0.1
+  * Host Port: 8000
+  * Guest IP: 
+  * Guest Port: 8000
+* Now start the REST service through Ambari
+  * Goto HBase
+  * "Start" from Service Actions
+* Now [Login to the VM through Putty](#login-using-putty)
+* ```su root```
+  * ```/usr/hdp/current/hbase-master/bin/hbase-daemon.sh start rest -p 8000 --infoport 8001```
+* Now we need **starbase** which is the REST client for HBase
+* On client machine,
+  * ```pip install starbase```
