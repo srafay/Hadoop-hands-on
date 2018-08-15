@@ -1390,7 +1390,7 @@ WHERE ratingCount > 10;
 * Create a HBase table for movie ratings by user
 * Then show we can quickly query it for individual users
 * Good example of sparse data
-*
+* <p align="center"><img src="https://i.imgur.com/JzD6c2t.png"></p>
 * HBase runs on top of HDFS
 * We will use a **REST service** to communicate between **Python client** and **HBase**
 * First we need to openup the port 8000 so that Python client could communicate with the REST service
@@ -1412,3 +1412,45 @@ WHERE ratingCount > 10;
 * Now we need **starbase** which is the REST client for HBase
 * On client machine,
   * ```pip install starbase```
+* Write the script
+
+```python
+# HBaseRESTPython.py
+
+from starbase import Connection
+
+c= Connection("127.0.0.1", "8000")
+
+ratings = c.table('ratings')
+
+if (ratings.exists()):
+   print("Dropping existing ratings table\n")
+   ratings.drop()
+
+ratings.create('rating')
+
+print("Parsing the ml-199k ratings data...\n")
+ratingFile = open("E:/Downloads/ml-100k/ml-100k/u.data", "r")
+
+batch = ratings.batch()
+
+for line in ratingFile:
+   (userID, movieID, rating, timestamp) = line.split()
+   batch.update(userID, {'rating': {movieID: rating}})
+   
+ratingFile.close()
+
+print("Committing ratings data to HBase via REST service\n")
+batch.commit(finalize=True)
+
+print("Get back ratings for some users...\n")
+print("Ratings for user ID 1:\n")
+print(ratings.fetch("1"))
+print("Ratings for user ID 33:\n")
+print(ratings.fetch("33"))
+```
+
+* Run the script and it will give the output
+  * Movie ratings for a UserID in a row format
+* When you are done with the REST service, stop it
+  * ```/usr/hdp/current/hbase-master/bin/hbase-daemon.sh stop rest```
