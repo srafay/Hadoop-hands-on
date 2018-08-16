@@ -1454,3 +1454,44 @@ print(ratings.fetch("33"))
   * Movie ratings for a UserID in a row format
 * When you are done with the REST service, stop it
   * ```/usr/hdp/current/hbase-master/bin/hbase-daemon.sh stop rest```
+  
+### Integrating Pig with HBase
+* Must create HBase table ahead of time
+* Your relation must have a unique key as its first column
+  * followed by subsequent columns as you want them saved in HBase
+* ```USING``` clause allows you to STORE into an HBase table
+* Can work at scale
+  * HBase is transactional on rows
+* Goto Files View in Ambari
+  * user > maria_dev > ml-100k > Upload
+  * Upload the u.user file on HDFS
+    * contains userID, age, gender, occupation, and zip code 
+    * data is pipe delimited (|)
+* Login to the [Virtual Machine with Putty](login-using-putty)
+* ```hbase shell```
+  * ```CREATE 'users', 'userinfo'```
+  * ```LIST``` to check that the table is created
+  * ```exit```
+* Write the script
+```pig
+# HBase.pig
+
+ratings = LOAD '/user/maria_dev/ml-100l/u.user'
+   USING PigStorage('|')
+   AS (userID:int, age:int, gender:chararray, occupation:chararray, zip:int);
+
+STORE ratings INTO 'hbase://users'
+   USING org.apache.pig.backend.hadoop.hbase.HBaseStorage ('userinfo:age,
+   userinfo:gender, userinfo:occupation, userinfo:zip');
+```
+* Run the script ```pig HBase.pig```
+* ```hbase shell```
+  * ```list``` to check that the ```users``` table exists
+  * ```scan 'users'``` to look for the data inside users table
+* Now if you want to delete the table
+  * ```disable 'users'```
+  * ```drop 'users'```
+  * ```list``` to check if users table is deleted
+  * ```exit```
+* If you are done with HBase
+  * goto Services > HBase > Service Actions > Stop
