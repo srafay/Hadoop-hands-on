@@ -1495,3 +1495,42 @@ STORE ratings INTO 'hbase://users'
   * ```exit```
 * If you are done with HBase
   * goto Services > HBase > Service Actions > Stop
+
+## Cassandra
+* A distributed database with no single point of failure
+* Unlike HBase, there is no master node at all
+  * every node runs exactly the same software and performs the same functions
+* Data model is similar to BigTable / HBase
+* It's non-relational
+  * but has a limited CQL query language as its interface
+  
+#### Cassandra's Design Choices
+* The **CAP Theorem** says you can only have 2 out of 3
+  * Consistency, Availability, Partitiion-tolerance
+    * and only Partition-tolerance is a requirement with big data
+    * so you really only get to choose between Consistency & availability
+* Cassandra favors availability over consistency
+  * it is "eventually consistent"
+  * but you can specify your consistency requirements as part of your request
+  * so it's really "tunable consistency"
+  
+### CQL
+* Cassandra's API is CQL
+  * which makes it easy to look like existing database drivers to applications
+* CQL is like SQL, but with some big limitations!
+  * No JOINS
+    * your data must be de-normalized
+    * so its still non-relational
+  * All queries must be on some primary key
+    * Secondary indices are supported, but there's performance bottlenecks
+* CQLSH can be used on the command line to create tables, etc
+* All tables must be in a *keyspace*
+  * keyspaces are like databases
+  
+### Cassandra and Spark
+* **DataStax** offers a Spark-Cassandra connector
+* Allows you to read and write Cassandra tables as DataFrames
+* Is smart about passing queries on those DataFrames down to the appropriate level
+* User cases:
+  * Use Spark for analytics on data stored in Cassandra
+  * Use Spark to transform data and store it into Cassandra for transactional use
