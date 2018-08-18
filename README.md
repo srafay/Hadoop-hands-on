@@ -1553,11 +1553,13 @@ STORE ratings INTO 'hbase://users'
   * We need to set up necessary repositories to pick up Cassandra packages
   * ```cd /etc/yum.repos.d```
   * ```nano datastax.repo```
-  * ```[datastax]
-    name = DataStax Repo for Apache Cassandra
-    baseurl = http://rpm.datastax.com/community
-    enabled = 1
-    gpgcheck = 0```
+  ```
+  [datastax]
+  name = DataStax Repo for Apache Cassandra
+  baseurl = http://rpm.datastax.com/community
+  enabled = 1
+  gpgcheck = 0
+  ```
   * Press ```cntrl+O``` and then ```cntrl+X``` to save the file
   * ```yum install dsc30```
     * DataStax Cassandra package installation
@@ -1570,10 +1572,8 @@ STORE ratings INTO 'hbase://users'
     * ```cqlsh --cqlversion="3.4.0"```
 * To create a table, we first need to create Keyspace
   * keyspace is like a database in SQL
-  * ```CREATE KEYSPACE movielens WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}
-    AND durable_writes = true;``` 
+  * ```CREATE KEYSPACE movielens WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'} AND durable_writes = true;```
 * ```USE movielens;```
-* ```CREATE TABLE users (user_id int, age int, gender text, occupation text,
-  zip text, PRIMARY KEY (user_id));```
+* ```CREATE TABLE users (user_id int, age int, gender text, occupation text, zip text, PRIMARY KEY (user_id));```
 * ```DESCRIBE TABLE users;```
   * to check the newly created table
