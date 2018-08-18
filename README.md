@@ -1534,3 +1534,46 @@ STORE ratings INTO 'hbase://users'
 * User cases:
   * Use Spark for analytics on data stored in Cassandra
   * Use Spark to transform data and store it into Cassandra for transactional use
+
+### Installing Cassandra on Horton Works Sandbox
+* Login to the cluster [with Putty](#login-using-putty)
+* ```su root```
+  * Password is ```hadoop``` by default
+* ```pip install cassandra-driver```
+* If you're unable to download with pip, try
+  * ```yum update```
+  * ```yum install scl-utils```
+    * Software collections - gives ability to switch between python versions
+  * ```yum install centos-release-scl-rh```
+    * CentOS specific component for scl
+  * ```yum install python27```
+  * ```scl enable python27 bash```
+    * switching to python 2.7
+    * ```python -V``` to verify
+  * We need to set up necessary repositories to pick up Cassandra packages
+  * ```cd /etc/yum.repos.d```
+  * ```nano datastax.repo```
+  * ```[datastax]
+    name = DataStax Repo for Apache Cassandra
+    baseurl = http://rpm.datastax.com/community
+    enabled = 1
+    gpgcheck = 0```
+  * Press ```cntrl+O``` and then ```cntrl+X``` to save the file
+  * ```yum install dsc30```
+    * DataStax Cassandra package installation
+* ```pip install cqlsh```
+  * CQL is a shell for interacting with Cassandra
+* ```service cassandra start```
+  * to start the cassandra service
+* ```cqlsh```
+  * if you get any version mismatch errors, give the specific supported version while giving this command
+    * ```cqlsh --cqlversion="3.4.0"```
+* To create a table, we first need to create Keyspace
+  * keyspace is like a database in SQL
+  * ```CREATE KEYSPACE movielens WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}
+    AND durable_writes = true;``` 
+* ```USE movielens;```
+* ```CREATE TABLE users (user_id int, age int, gender text, occupation text,
+  zip text, PRIMARY KEY (user_id));```
+* ```DESCRIBE TABLE users;```
+  * to check the newly created table
