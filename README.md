@@ -1577,3 +1577,67 @@ STORE ratings INTO 'hbase://users'
 * ```CREATE TABLE users (user_id int, age int, gender text, occupation text, zip text, PRIMARY KEY (user_id));```
 * ```DESCRIBE TABLE users;```
   * to check the newly created table
+* ```exit``` to go back to terminal
+
+#### Populating the Cassandra DB with Spark
+* Write the script as *CassandraSpark.py*
+```python
+# CassandraSpark.py
+
+from pyspark.sql import SparkSession
+from pyspark.sql import Row
+from pyspark.sql import functions
+
+def parseInput(line):
+    fields = line.split('|')
+    return Row(user_id = int(fields[0]), age = int(fields[1]), gender = fields[2], occupation = fields[3], zip = fields[4])
+
+if __name__ == "__main__":
+    # Create a SparkSession
+    spark = SparkSession.builder.appName("CassandraIntegration").config("spark.cassandra.connection.host", "127.0.0.1").getOrCreate()
+
+    # Get the raw data
+    lines = spark.sparkContext.textFile("hdfs:///user/maria_dev/ml-100k/u.user")
+    # Convert it to a RDD of Row objects with (userID, age, gender, occupation, zip)
+    users = lines.map(parseInput)
+    # Convert that to a DataFrame
+    usersDataset = spark.createDataFrame(users)
+
+    # Write it into Cassandra
+    usersDataset.write\
+        .format("org.apache.spark.sql.cassandra")\
+        .mode('append')\
+        .options(table="users", keyspace="movielens")\
+        .save()
+
+    # Read it back from Cassandra into a new Dataframe
+    readUsers = spark.read\
+    .format("org.apache.spark.sql.cassandra")\
+    .options(table="users", keyspace="movielens")\
+    .load()
+
+    readUsers.createOrReplaceTempView("users")
+
+    sqlDF = spark.sql("SELECT * FROM users WHERE age < 20")
+    sqlDF.show()
+
+    # Stop the session
+    spark.stop()
+```
+
+  * Make sure you have **u.user** file in user > maria_dev > ml-100k directory
+    * if not, [login with Ambari](#login-using-ambari) and goto files view to upload that file from [movielens dataset](http://files.grouplens.org/datasets/movielens/ml-100k.zip)
+  * The above script reads plain text from u.user file and then parses them into ```Row``` object
+    * ```Row``` objects are needed by the Spark DataFrames
+  * These ```Row``` objects are then converted into Spark supported ```DataFrames```
+  * These dataframe objects can now be written to the Cassandra DB
+  * We can also perform queries on the dataset
+* To run the script, ```export SPARK_MAJOR_VERSION=2```
+* ```spark-submit --packages datastax:spark-cassandra-connector:2.0.0-M2-s_2.11 CassandraSpark.py```
+* To check whether the data was written into Cassandra DB or not
+  * ```cqlsh --cqlversion="3.4.0"```
+  * ```USE movielens;```
+  * ```SELECT * FROM users LIMIT 10;```
+  * ```exit```
+* ```service cassandra stop```
+  * to stop the service when you're done experimenting with Cassandra
