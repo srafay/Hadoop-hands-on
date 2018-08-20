@@ -1641,3 +1641,61 @@ if __name__ == "__main__":
   * ```exit```
 * ```service cassandra stop```
   * to stop the service when you're done experimenting with Cassandra
+  
+## MongoDB
+* Managing HuMONGOus data
+* MongoDB is a free and open-source cross-platform document-oriented database program
+* Classified as a NoSQL database program
+  * MongoDB uses JSON-like documents with schema
+* Example:
+```json
+{
+  "_id": ObjectID("7b2js62k09bae5ea6027sdl271c3"),
+  "title": "A blog post about MongoDB",
+  "content": "This is a blog post about MongoDB",
+  "comments": [
+     {
+        "name": "Morty",
+	"email": "Morty@ricknmorty.com",
+	"content": "This is the best article ever written!",
+	"rating": 1
+     }
+  ]
+}
+```
+
+#### No real schema is enforced
+* You can have different fields in every document if you want to
+* No single "key" as in other databases
+  * But you can create indices on any fields you want
+    * or even combinations of fields
+  * If you want to "shard", then you must do so on some index
+* Results in a lot of flexibility
+  * But with great power comes great responsibility
+
+#### MongoDB terminology
+* Databases
+* Collections
+  * just like tables
+* Documents
+  * just like rows
+  
+#### Replication Sets
+* Single Master
+* Maintains backup copies of your database instance
+  * Secondaries can elect a new primary within seconds if your primary goes down
+  * But make sure your operation log is long enough to give you time to recover the primary when it comes back
+  * Applications talk with Primary
+  
+#### Replica Set Quirks
+* A majority of the servers in your set must agree on the primary
+  * Even numbers of servers (like 2) don't work well
+* Don't want to spend money on 3 servers?
+  * You can set up an 'arbiter' node
+    * But only one
+* Apps must know about enough servers in the replica set to be able to reach one to learn who's primary
+* Replicas only address durability, not your ability to scale
+  * Well, unless you can take advantage of reading from secondaries
+    * which generally isn't recommended
+  * And your DB will still go into read-only mode for a bit while a new primary is elected
+* Delayed secondaries can be set up as insurance against people doing dumb things
