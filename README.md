@@ -1699,3 +1699,43 @@ if __name__ == "__main__":
     * which generally isn't recommended
   * And your DB will still go into read-only mode for a bit while a new primary is elected
 * Delayed secondaries can be set up as insurance against people doing dumb things
+
+### Sharding
+* For scaling out data on more than 1 server with MongoDB, we do Sharding
+* Ranges of some indexed value you specify are assigned to different replica sets
+  * each replica set is responsible for some range of values on some indexed value in the DB
+* In order to do sharding, we need to set up index on some unique value in our collection
+* On the application server, you set up ```mongos```
+* ```mongos``` talks with 3 config servers running which know about the partitioning information
+  * this information is used by mongos to know which replica set to talk with for getting the data
+* mongos also run a balancer in the background
+  * After some time if it finds out that the data is not evenly partitioned
+  * it can rebalance the values across the replica sets in real time
+* <p align="center"><img src="https://i.imgur.com/g3Jlnlr.png"></p>
+
+#### Sharding Quirks
+* Auto-sharding sometimes doesn't work
+  * Split storms, mongos processes restarted too often
+* You must have 3 config servers
+  * And if any one goes down, your DB is down
+  * This is on top of the single-master design of replica sets
+* MongoDB's loose document model can be at odds with effective sharding
+
+#### Neat things about MongoDB
+* It's not just a NoSQL database
+  * very flexible document model
+* Shell is a full JavaScript interpreter
+  * can run JS functions across your entire MongoDB
+* Supports many indices
+  * but only one can be used for sharding
+  * more than 2-3 are still discouraged
+  * Full-text indices for text searches
+  * Spatial indices
+    * Spatial indices are used by spatial databases (databases which store information related to objects in space)
+    * Conventional index types do not efficiently handle spatial queries
+    * such as how far two points differ, or whether points fall within a spatial area of interest
+* Built-in aggregation capabilities, MapReduce, GridFS
+  * for some applications you might not need Hadoop at all
+  * But MongoDB still integrates with Hadoop, Spark, and most languages
+* A SQL connector is available
+  * but MongoDB still isn't designed for joins & normalized data really
