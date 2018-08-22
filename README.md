@@ -1648,6 +1648,10 @@ if __name__ == "__main__":
   * We can also perform queries on the dataset
 * To run the script, ```export SPARK_MAJOR_VERSION=2```
 * ```spark-submit --packages datastax:spark-cassandra-connector:2.0.0-M2-s_2.11 CassandraSpark.py```
+  * it means that it is a Cassandra connector for
+    * Scala version 2.11
+    * Spark version 2.0.0
+  * might be different if you're using a newer version of HortonWorks Sandbox
 * To check whether the data was written into Cassandra DB or not
   * ```cqlsh --cqlversion="3.4.0"```
   * ```USE movielens;```
@@ -1754,3 +1758,84 @@ if __name__ == "__main__":
 * A SQL connector is available
   * but MongoDB still isn't designed for joins & normalized data really
  
+#### Using Mongo with Spark example
+* [Login using Putty](#login-using-putty)
+* ```su root```
+* ```cd /var/lib/ambari-server/resources/stacks```
+* ```cd HDP```
+  * now ```ls``` and check switch to the directory version of your Hadoop
+* if the Hadoop version is 2.5
+  * ```cd 2.5```
+* ```cd services```
+* Now we will add MongoDB to the services list
+  * there is a mongo-ambari connector available on github
+* ```git clone https://github.com/nikunjness/mongo-ambari.git```
+* Now restart the ambari services for the changes to be effective
+  * ```sudo service ambari restart```
+* Goto http://127.0.0.1:8080
+  * sign in with ```admin``` credentials
+* Click on **Actions** button > Add service
+  * Select **MongoDB** from the list
+  * Click on Next
+  * Just accept the default values and keep clicking Next
+  * If you get warnings, click on **Proceed anyway**
+    * warnings are due to the large number of services running on a single virtual machine
+  * Finally click on Deploy
+* Now make sure you have **u.user** file in user/maria_dev/ml-100k/ directory
+* On putty client, type ```pip install pymongo```
+* ```exit``` to switch back to normal user
+  * ```cd ~``` to go back to the home directory
+* Write the script into ```MongoSpark.py``` file
+```python
+# MongoSpark.py
+
+from pyspark.sql import SparkSession
+from pyspark.sql import Row
+from pyspark.sql import functions
+
+def parseInput(line):
+    fields = line.split('|')
+    return Row(user_id = int(fields[0]), age = int(fields[1]), gender = fields[2], occupation = fields[3], zip = fields[4])
+
+if __name__ == "__main__":
+    # Create a SparkSession
+    spark = SparkSession.builder.appName("MongoDBIntegration").getOrCreate()
+
+    # Get the raw data
+    lines = spark.sparkContext.textFile("hdfs:///user/maria_dev/ml-100k/u.user")
+    # Convert it to a RDD of Row objects with (userID, age, gender, occupation, zip)
+    users = lines.map(parseInput)
+    # Convert that to a DataFrame
+    usersDataset = spark.createDataFrame(users)
+
+    # Write it into MongoDB
+    # database is movielens
+    # collection is users
+    usersDataset.write\
+        .format("com.mongodb.spark.sql.DefaultSource")\
+        .option("uri","mongodb://127.0.0.1/movielens.users")\
+        .mode('append')\
+        .save()
+
+    # Read it back from MongoDB into a new Dataframe
+    readUsers = spark.read\
+    .format("com.mongodb.spark.sql.DefaultSource")\
+    .option("uri","mongodb://127.0.0.1/movielens.users")\
+    .load()
+
+    readUsers.createOrReplaceTempView("users")
+
+    sqlDF = spark.sql("SELECT * FROM users WHERE age < 20")
+    sqlDF.show()
+
+    # Stop the session
+    spark.stop()
+```
+  
+* ```export SPARK_MAJOR_VERSION=2```
+  * since we want to use Spark 2.0
+* ```spark-submit --packages org.mongodb.spark:mongo-spark-connector_2.11:2.0.0 MongoSpark.py```
+  * it means that it is a MongoDB connector for
+    * Scala version 2.11
+    * Spark version 2.0.0
+  * might be different if you're using a newer version of HortonWorks Sandbox
