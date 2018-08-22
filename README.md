@@ -112,6 +112,20 @@
   * hadoop fs -copyFromLocal *source* *Destination*
 * To check all the commands, type
   * hadoop fs
+  
+#### Admin access for Ambari
+* Sometimes, we need admin access to Ambari instead of maria_dev
+  * For example, starting or stopping some services
+  * or installing new services on Hadoop
+  * these actions require administrative privileges
+* In order to have the Admin access
+  * first [login using Putty](#login-using-putty) using maria_dev credentials
+  * ```su root```
+  * ```ambari-admin-password-reset```
+    * now set the new password for the ```admin``` account
+* Now goto http://localhost:8080
+  * enter username as ```admin```
+  * password is what you just entered in the previous command
 
 ## MapReduce
 * Distributes the processing of data on your cluster
@@ -1739,3 +1753,4 @@ if __name__ == "__main__":
   * But MongoDB still integrates with Hadoop, Spark, and most languages
 * A SQL connector is available
   * but MongoDB still isn't designed for joins & normalized data really
+ 
