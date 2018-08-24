@@ -1,5 +1,23 @@
-# Hadoop
 *Learning how to tame the Big Data with Hadoop and related technologies*
+
+##### Table of Contents
+- [Hadoop](#hadoop)
+  * [Installation](#installation)
+  * [Overview of Hadoop Ecosystem](#overview-of-hadoop-ecosystem)
+  * [HDFS](#hdfs)
+    + [Login using Ambari](#login-using-ambari)
+    + [Login using Putty](#login-using-putty)
+    + [Admin access for Ambari](#admin-access-for-ambari)
+- [Map Reduce](#mapreduce)
+  * [Architecture](#architecture)
+  * [Handling Failures](#handling-failures)
+  * [Map Reduce Example](#example)
+  * [Running on HortonWorks Sandbox](#running-on-hortonworks-sandbox)
+  * [Map Reduce Challenge 01](#map-reduce-challenge-01)
+  * [Map Reduce Challenge 02](#map-reduce-challenge-02)
+    
+## Hadoop
+
 * Hadoop is an **open source** software platform for **distributed storage** and **distributed processing** of **very large datasets** on **computer clusters** built from commodity hardware
 * Why Hadoop?
   * Data is too big
