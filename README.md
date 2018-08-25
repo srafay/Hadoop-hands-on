@@ -1857,3 +1857,23 @@ if __name__ == "__main__":
     * Scala version 2.11
     * Spark version 2.0.0
   * might be different if you're using a newer version of HortonWorks Sandbox
+  
+#### Mongo Examples
+* [Login to the shell using Putty](#login-using-putty)
+* type ```mongo```
+  * ```use movielens``` 
+* To find the information about user ID 100, type
+  * ```db.users.find( {user_id: 100 } )```
+* To know what's going on behind a command, use explain function
+  * ```db.users.explain().find( {user_id: 100} )```
+    * you will see inside *winningPlan* that it's just scanning collections to find the user ID
+    * It just scans all the collections to find the particular user ID which is inefficient
+    * We should do indexing on the user ID to make queries faster
+* To create index on the user ID
+  * ```db.users.createIndex ( {user_id: 1} )```
+    * this create an index on user_id in descending order
+  * to verify that index was created
+  * ```db.users.explain().find( {user_id: 100} )```
+    * check the *winningPlan* 
+    * you will that now it is doing **IXSCAN** - index scan
+    * thus the queries will be alot more efficient now
