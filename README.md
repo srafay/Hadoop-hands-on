@@ -415,8 +415,9 @@ if __name__ == '__main__':
 * Now ```order``` the joined table by their *ratingTime*
 * Display the first few entries by the command ```dump```
 * Now transform the above logic into Pig Latin Query as
-```sql
-# OldestPopularMovies
+```pig
+# OldestPopularMovies.pig
+
 ratings = LOAD '/user/maria_dev/ml-100k/u.data' AS (userID:int, movieID:int, rating:int, ratingTime:int);
 
 metadata = LOAD '/user/maria_dev/ml-100k/u.item' USING PigStorage('|')
