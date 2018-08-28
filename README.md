@@ -15,6 +15,11 @@
   * [Running on HortonWorks Sandbox](#running-on-hortonworks-sandbox)
   * [Map Reduce Challenge 01](#map-reduce-challenge-01)
   * [Map Reduce Challenge 02](#map-reduce-challenge-02)
+- [Pig](#programming-hadoop-with-pig)
+  * [Pig Latin Example](#pig-latin-example)
+  * [Running the script using Ambari](#running-the-script-using-ambari)
+  * [Pig Latin: Diving Deeper](#pig-latin-diving-deeper)
+  * [Pig Challenge](#pig-challenge-01)
     
 ## Hadoop
 
