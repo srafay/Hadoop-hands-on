@@ -20,6 +20,25 @@
   * [Running the script using Ambari](#running-the-script-using-ambari)
   * [Pig Latin: Diving Deeper](#pig-latin-diving-deeper)
   * [Pig Challenge](#pig-challenge-01)
+- [Spark](#spark)
+  * [Why is it scalable](#scalable)
+  * [Components of Spark](#components-of-spark)
+  * [Resilient Distributed Dataset (RDD)](#resilient-distributed-dataset-rdd)
+    + [Creating RDDs](#creating-rdds)
+	+ [Transforming RDDs](#transforming-rdds)
+	+ [RDD Actions](#rdd-actions)
+  * [Spark Example](#spark-example)
+  * [Running the Spark script](#running-the-spark-script)
+  * [Spark Challenge 01](#spark-challenge-01)
+- [Spark SQL](#spark-sql)
+  * [Shell access for Spark SQL](#shell-access)
+  * [User defined functions](#spark-udfs)
+  * [Spark SQL Example](#spark-sql-example)
+  * [Running Spark SQL](#running-spark-sql)
+  * [Spark SQL Challenge 01](#spark-sql-challenge-01)
+- [Using MLLib in Spark 2.0](#using-mllib-in-spark-20)
+  * [Making a recommendation model](#using-mllib-in-spark-20)
+
     
 ## Hadoop
 
