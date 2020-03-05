@@ -54,6 +54,22 @@
   * [How to access HBase](#some-ways-to-access-hbase)
   * [Populate HBase using Python REST API](#creating-a-hbase-table-with-python-via-rest)
   * [Integrate Pig with HBase](#integrating-pig-with-hbase)
+- [Cassandra DB](#cassandra)
+  * [So why Cassandra](#cassandras-design-choices)
+  * [What is CQL](#cql)
+  * [Cassandra and Spark](#cassandra-and-spark)
+  * [Installing Cassandra](#installing-cassandra-on-horton-works-sandbox)
+  * [Populate Cassandra DB with Spark](#populating-the-cassandra-db-with-spark)
+- [Mongo DB](#mongodb)
+  * [Does it have a schema](#no-real-schema-is-enforced)
+  * [Lets learn Mongo terminology](#mongodb-terminology)
+  * [How does it replicate](#replication-sets)
+    - [Something we should know about Replica sets](#replica-set-quirks)
+  * [Sharding](#sharding)
+    - [Things to know about Sharding](#sharding-quirks)
+  * [Mongo Extra knowledge](#neat-things-about-mongodb)
+  * [How to use MongoDB with Spark](#using-mongo-with-spark-example)
+  * [Example queries](#mongo-examples)
 
     
 ## Hadoop
